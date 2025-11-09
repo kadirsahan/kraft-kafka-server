@@ -1,0 +1,28 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: {{ .Values.kafka.controllers.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    strimzi.io/cluster: {{ .Values.nameOverride }}
+spec:
+  replicas: {{ .Values.kafka.controllers.replicas }}
+  roles:
+    - controller
+  resources:
+    requests:
+      memory: {{ .Values.kafka.controllers.resources.requests.memory }}
+      cpu: {{ .Values.kafka.controllers.resources.requests.cpu }}
+    limits:
+      memory: {{ .Values.kafka.controllers.resources.limits.memory }}
+      cpu: {{ .Values.kafka.controllers.resources.limits.cpu }}
+  storage:
+    type: {{ .Values.kafka.controllers.storage.type }}
+    volumes:
+    - id: 0
+      type: persistent-claim
+      size: {{ .Values.kafka.controllers.storage.size }}
+      deleteClaim: {{ .Values.kafka.controllers.storage.deleteClaim }}
+      {{- if .Values.kafka.controllers.storage.class }}
+      class: {{ .Values.kafka.controllers.storage.class }}
+      {{- end }}

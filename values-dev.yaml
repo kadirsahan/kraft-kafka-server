@@ -1,0 +1,76 @@
+# Development environment values
+# Minimal resources for local/dev clusters
+
+nameOverride: "kraft-kafka-cluster"
+namespace: "kraft-kafka"
+
+kafka:
+  version: "4.0.0"
+  metadataVersion: "4.0-IV0"
+
+  controllers:
+    name: "controllers"
+    replicas: 1  # Single controller for dev
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    storage:
+      type: "jbod"
+      size: "5Gi"  # Smaller storage for dev
+      deleteClaim: false
+      class: ""
+
+  brokers:
+    name: "brokers"
+    replicas: 1  # Single broker for dev
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    storage:
+      type: "jbod"
+      size: "5Gi"  # Smaller storage for dev
+      deleteClaim: false
+      class: ""
+
+  config:
+    numPartitions: 1
+    defaultReplicationFactor: 1  # Single replica for dev
+    minInSyncReplicas: 1
+    offsetsTopicReplicationFactor: 1
+    transactionStateLogReplicationFactor: 1
+    transactionStateLogMinIsr: 1
+
+  listeners:
+    plain:
+      enabled: true
+      name: "plain"
+      port: 9092
+      type: "internal"
+      tls: false
+    tls:
+      enabled: false  # Disable TLS in dev
+      name: "tls"
+      port: 9093
+      type: "internal"
+      tls: true
+    external:
+      enabled: true
+      name: "external"
+      port: 9094
+      type: "nodeport"
+      tls: false
+
+  entityOperator:
+    enabled: true
+    topicOperator:
+      enabled: true
+    userOperator:
+      enabled: true

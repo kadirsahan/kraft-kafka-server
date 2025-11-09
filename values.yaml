@@ -1,0 +1,89 @@
+# Default values for kraft-kafka-server
+# This is a YAML-formatted file.
+
+# Cluster name and namespace
+nameOverride: "kraft-kafka-cluster"
+namespace: "kraft-kafka"
+
+# Kafka configuration
+kafka:
+  # Kafka version
+  version: "4.0.0"
+  metadataVersion: "4.0-IV0"
+
+  # Controller node pool configuration
+  controllers:
+    name: "controllers"
+    replicas: 3
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "1Gi"
+        cpu: "1000m"
+    storage:
+      type: "jbod"
+      size: "10Gi"
+      deleteClaim: false
+      # StorageClass name - leave empty for default StorageClass
+      class: ""
+
+  # Broker node pool configuration
+  brokers:
+    name: "brokers"
+    replicas: 3
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+    storage:
+      type: "jbod"
+      size: "10Gi"
+      deleteClaim: false
+      # StorageClass name - leave empty for default StorageClass
+      class: ""
+
+  # Kafka configuration
+  config:
+    numPartitions: 3
+    defaultReplicationFactor: 3
+    minInSyncReplicas: 2
+    offsetsTopicReplicationFactor: 3
+    transactionStateLogReplicationFactor: 3
+    transactionStateLogMinIsr: 2
+
+  # Listeners configuration
+  listeners:
+    # Internal plaintext listener
+    plain:
+      enabled: true
+      name: "plain"
+      port: 9092
+      type: "internal"
+      tls: false
+    # Internal TLS listener
+    tls:
+      enabled: true
+      name: "tls"
+      port: 9093
+      type: "internal"
+      tls: true
+    # External NodePort listener
+    external:
+      enabled: true
+      name: "external"
+      port: 9094
+      type: "nodeport"
+      tls: false
+
+  # Entity Operator configuration
+  entityOperator:
+    enabled: true
+    topicOperator:
+      enabled: true
+    userOperator:
+      enabled: true

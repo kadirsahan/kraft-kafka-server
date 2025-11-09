@@ -1,0 +1,76 @@
+# Production environment values
+# High availability and production-grade resources
+
+nameOverride: "kraft-kafka-cluster"
+namespace: "kraft-kafka"
+
+kafka:
+  version: "4.0.0"
+  metadataVersion: "4.0-IV0"
+
+  controllers:
+    name: "controllers"
+    replicas: 3  # HA: 3 controllers
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "1000m"
+      limits:
+        memory: "2Gi"
+        cpu: "2000m"
+    storage:
+      type: "jbod"
+      size: "50Gi"  # Larger storage for prod
+      deleteClaim: false
+      class: ""  # Set to your production StorageClass
+
+  brokers:
+    name: "brokers"
+    replicas: 3  # HA: 3 brokers
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+    storage:
+      type: "jbod"
+      size: "100Gi"  # Larger storage for prod
+      deleteClaim: false
+      class: ""  # Set to your production StorageClass
+
+  config:
+    numPartitions: 3
+    defaultReplicationFactor: 3  # Full replication
+    minInSyncReplicas: 2  # Ensure durability
+    offsetsTopicReplicationFactor: 3
+    transactionStateLogReplicationFactor: 3
+    transactionStateLogMinIsr: 2
+
+  listeners:
+    plain:
+      enabled: true
+      name: "plain"
+      port: 9092
+      type: "internal"
+      tls: false
+    tls:
+      enabled: true  # Enable TLS in prod
+      name: "tls"
+      port: 9093
+      type: "internal"
+      tls: true
+    external:
+      enabled: true
+      name: "external"
+      port: 9094
+      type: "nodeport"
+      tls: false
+
+  entityOperator:
+    enabled: true
+    topicOperator:
+      enabled: true
+    userOperator:
+      enabled: true

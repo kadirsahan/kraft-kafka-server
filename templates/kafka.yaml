@@ -1,0 +1,46 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .Values.nameOverride }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    strimzi.io/node-pools: enabled
+spec:
+  kafka:
+    version: {{ .Values.kafka.version }}
+    metadataVersion: {{ .Values.kafka.metadataVersion }}
+    config:
+      num.partitions: {{ .Values.kafka.config.numPartitions }}
+      default.replication.factor: {{ .Values.kafka.config.defaultReplicationFactor }}
+      min.insync.replicas: {{ .Values.kafka.config.minInSyncReplicas }}
+      offsets.topic.replication.factor: {{ .Values.kafka.config.offsetsTopicReplicationFactor }}
+      transaction.state.log.replication.factor: {{ .Values.kafka.config.transactionStateLogReplicationFactor }}
+      transaction.state.log.min.isr: {{ .Values.kafka.config.transactionStateLogMinIsr }}
+    listeners:
+      {{- if .Values.kafka.listeners.plain.enabled }}
+      - name: {{ .Values.kafka.listeners.plain.name }}
+        port: {{ .Values.kafka.listeners.plain.port }}
+        type: {{ .Values.kafka.listeners.plain.type }}
+        tls: {{ .Values.kafka.listeners.plain.tls }}
+      {{- end }}
+      {{- if .Values.kafka.listeners.tls.enabled }}
+      - name: {{ .Values.kafka.listeners.tls.name }}
+        port: {{ .Values.kafka.listeners.tls.port }}
+        type: {{ .Values.kafka.listeners.tls.type }}
+        tls: {{ .Values.kafka.listeners.tls.tls }}
+      {{- end }}
+      {{- if .Values.kafka.listeners.external.enabled }}
+      - name: {{ .Values.kafka.listeners.external.name }}
+        port: {{ .Values.kafka.listeners.external.port }}
+        type: {{ .Values.kafka.listeners.external.type }}
+        tls: {{ .Values.kafka.listeners.external.tls }}
+      {{- end }}
+  {{- if .Values.kafka.entityOperator.enabled }}
+  entityOperator:
+    {{- if .Values.kafka.entityOperator.topicOperator.enabled }}
+    topicOperator: {}
+    {{- end }}
+    {{- if .Values.kafka.entityOperator.userOperator.enabled }}
+    userOperator: {}
+    {{- end }}
+  {{- end }}

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: kraft-kafka-server
+description: Apache Kafka cluster running in KRaft mode using Strimzi operator
+type: application
+version: 1.0.0
+appVersion: "4.0.0"
+keywords:
+  - kafka
+  - kraft
+  - strimzi
+  - streaming
+home: https://github.com/kadirsahan/kraft-kafka-server
+maintainers:
+  - name: kadirsahan
