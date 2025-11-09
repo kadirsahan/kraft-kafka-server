@@ -15,21 +15,21 @@ spec:
   authorization:
     type: {{ .authorization.type }}
     acls:
-      {{- range .authorization.acls }}
+{{- range .authorization.acls }}
       - resource:
           type: {{ .resource.type }}
-          {{- if .resource.name }}
+{{- if .resource.name }}
           name: {{ .resource.name }}
-          {{- end }}
+{{- end }}
           patternType: {{ .resource.patternType }}
-        {{- if .operations }}
+{{- if .operations }}
         operations:
-          {{- toYaml .operations | nindent 10 }}
-        {{- end }}
-        {{- if .host }}
+{{ toYaml .operations | indent 10 }}
+{{- end }}
+{{- if .host }}
         host: {{ .host }}
-        {{- end }}
-      {{- end }}
+{{- end }}
+{{- end }}
   {{- end }}
 {{- end }}
 {{- end }}
