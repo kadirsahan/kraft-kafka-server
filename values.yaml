@@ -87,3 +87,103 @@ kafka:
       enabled: true
     userOperator:
       enabled: true
+
+# Kafka Users (for authentication)
+kafkaUsers:
+  - name: "kafka-connect-user"
+    enabled: true
+    authentication: "tls"  # mTLS authentication
+    authorization:
+      enabled: true
+      type: "simple"
+      acls:
+        # Allow reading from consumer group
+        - resource:
+            type: "group"
+            name: "connect-cluster"
+            patternType: "prefix"
+          operations:
+            - "Read"
+        # Allow access to connect internal topics
+        - resource:
+            type: "topic"
+            name: "connect-cluster-"
+            patternType: "prefix"
+          operations:
+            - "Read"
+            - "Write"
+            - "Create"
+            - "Describe"
+        # Allow access to offset storage topic
+        - resource:
+            type: "topic"
+            name: "connect-cluster-offsets"
+            patternType: "literal"
+          operations:
+            - "Read"
+            - "Write"
+            - "Create"
+            - "Describe"
+        # Allow access to config storage topic
+        - resource:
+            type: "topic"
+            name: "connect-cluster-configs"
+            patternType: "literal"
+          operations:
+            - "Read"
+            - "Write"
+            - "Create"
+            - "Describe"
+        # Allow access to status storage topic
+        - resource:
+            type: "topic"
+            name: "connect-cluster-status"
+            patternType: "literal"
+          operations:
+            - "Read"
+            - "Write"
+            - "Create"
+            - "Describe"
+        # Allow access to any topics for connectors (adjust as needed)
+        - resource:
+            type: "topic"
+            name: "*"
+            patternType: "literal"
+          operations:
+            - "Read"
+            - "Write"
+            - "Create"
+            - "Describe"
+        # Allow cluster operations
+        - resource:
+            type: "cluster"
+            patternType: "literal"
+          operations:
+            - "Create"
+            - "Describe"
+
+# Kafka Topics (pre-created topics)
+kafkaTopics:
+  - name: "connect-cluster-configs"
+    enabled: true
+    partitions: 1
+    replicas: 3
+    config:
+      cleanup.policy: "compact"
+      compression.type: "producer"
+
+  - name: "connect-cluster-offsets"
+    enabled: true
+    partitions: 25
+    replicas: 3
+    config:
+      cleanup.policy: "compact"
+      compression.type: "producer"
+
+  - name: "connect-cluster-status"
+    enabled: true
+    partitions: 5
+    replicas: 3
+    config:
+      cleanup.policy: "compact"
+      compression.type: "producer"
